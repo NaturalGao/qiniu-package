@@ -4,10 +4,7 @@ var router = express.Router();
 var mac = require("../package/qiniu-package")
 var multer = require('multer');
 const { use, param, route } = require('.');
-const BusinessError = require('../Error/BusinessError');
 var upload = multer()
-
-var app = express();
 
 /* get 上传token*/
 router.get('/uploadToken', function (req, response, next) {

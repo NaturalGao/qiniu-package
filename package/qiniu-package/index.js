@@ -9,6 +9,7 @@ const conf = config.conf
 
 const mac = new qiniu.auth.digest.Mac(config.accessKey, config.secretKey);
 
+
 /**
  * 获取资源地址
  * @param {*} uri 
@@ -81,6 +82,10 @@ const manyUpload = (uploadToken, formUploader, putExtra, files) => {
 
 }
 
+/**
+ * 根据文件大小选择对应的处理模式
+ * @param {*} file 
+ */
 const getUploadObject = (file) => {
   let size = file.size / 1024 / 1024
   let object = {}
@@ -146,6 +151,5 @@ mac.putStream = files => {
     }
   });
 }
-
 
 module.exports = mac
