@@ -4,7 +4,7 @@ const config = {
   secretKey: '52seBU7aQzFt7ySwfniHI7uu36eW2iCiwDJdvmRY',
   bucket: 'cimeiren',
   domain: 'http://yun.kccmr.com/',
-  fileStorePath: '/uploads/',
+  fileStorePath: '/test/',
   defaultSize: 4   //默认4m 
 }
 

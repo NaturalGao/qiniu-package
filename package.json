@@ -17,5 +17,8 @@
     "pug": "2.0.0-beta11",
     "qiniu": "^7.3.2",
     "string-random": "^0.1.3"
+  },
+  "devDependencies": {
+    "cors": "^2.8.5"
   }
 }
