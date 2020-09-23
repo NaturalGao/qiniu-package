@@ -4,7 +4,6 @@ const stream = require('stream');   //流处理
 const stringRandom = require('string-random');   //随机字符串包
 
 const config = require("./config");
-const BusinessError = require("../../Error/BusinessError");
 
 const conf = config.conf
 
