@@ -37,22 +37,25 @@ const streamDuplex = buffer => {
  * @param {*} key //文件key
  * @param {*} buffer   //文件buffer
  */
-const singleUpload = (uploadToken, formUploader, putExtra, key, buffer, callback) => {
+const singleUpload = (uploadToken, formUploader, putExtra, key, buffer) => {
 
-  let readableStream = streamDuplex(buffer);
+  return new Promise((resolve, reject) => {
+    let readableStream = streamDuplex(buffer);
 
-  formUploader.putStream(uploadToken, key, readableStream, putExtra, function (respErr,
-    respBody, respInfo) {
-    if (respErr) {
-      throw new BusinessError(400, '上传错误')
-    }
-    if (respInfo.statusCode == 200) {
-      let uri = getUrl(key)
-      return callback(uri)
-    } else {
-      throw new BusinessError(400, respBody)
-    }
-  });
+    formUploader.putStream(uploadToken, key, readableStream, putExtra, function (respErr,
+      respBody, respInfo) {
+      if (respErr) {
+        return reject('上传错误')
+      }
+      if (respInfo.statusCode == 200) {
+        let uri = getUrl(key)
+        return resolve(uri)
+      } else {
+        return reject(respBody)
+      }
+    });
+  })
+
 
 }
 
@@ -60,17 +63,23 @@ const singleUpload = (uploadToken, formUploader, putExtra, key, buffer, callback
  * 多文件上传
  * @param {*} files 
  */
-const manyUpload = (uploadToken, formUploader, putExtra, files, callback) => {
-  let uriArr = [];
-  files.forEach(item => {
-    let key = item.key ? item.key : config.fileStorePath + stringRandom(16)
-    singleUpload(uploadToken, formUploader, putExtra, key, item.buffer, uri => {
-      uriArr.push(uri)
-      if (uriArr.length == files.length) {
-        return callback(uriArr)
-      }
+const manyUpload = (uploadToken, formUploader, putExtra, files) => {
+
+  return new Promise((resolve, reject) => {
+    let uriArr = [];
+    files.forEach(item => {
+      let key = item.key ? item.key : config.fileStorePath + stringRandom(16)
+      singleUpload(uploadToken, formUploader, putExtra, key, item.buffer).then(res => {
+        uriArr.push(res)
+        if (uriArr.length == files.length) {
+          resolve(uriArr)
+        }
+      }).catch(msg => {
+        reject(msg)
+      })
     })
   })
+
 }
 
 const getUploadObject = (file) => {
@@ -108,31 +117,36 @@ mac.uploadToken = (options = {}, keyToOverwrite = '') => {
 /**
  * 上传文件流
  * @param {*} files 
- * @param {*} callback 
  */
-mac.putStream = (files, callback) => {
-
-  let uploadToken = mac.uploadToken()
-  let formUploader = new qiniu.form_up.FormUploader(conf);
-  let putExtra = new qiniu.form_up.PutExtra();
-  if (files instanceof Array) {
-    manyUpload(uploadToken, formUploader, putExtra, files, uri => {
-      return callback({
-        code: 200,
-        status: 'success',
-        data: uri
+mac.putStream = files => {
+  return new Promise((resolve, reject) => {
+    let uploadToken = mac.uploadToken()
+    let formUploader = new qiniu.form_up.FormUploader(conf);
+    let putExtra = new qiniu.form_up.PutExtra();
+    if (files instanceof Array) {
+      manyUpload(uploadToken, formUploader, putExtra, files).then(res => {
+        return resolve({
+          code: 200,
+          status: 'success',
+          data: res
+        })
+      }).catch(msg => {
+        reject(msg)
       })
-    })
-  } else {
-    let key = files.key ? files.key : config.fileStorePath + stringRandom(16)
-    singleUpload(uploadToken, formUploader, putExtra, key, files.buffer, uri => {
-      return callback({
-        code: 200,
-        status: 'success',
-        data: uri
+    } else {
+      let key = files.key ? files.key : config.fileStorePath + stringRandom(16)
+      singleUpload(uploadToken, formUploader, putExtra, key, files.buffer).then(res => {
+        return resolve({
+          code: 200,
+          status: 'success',
+          data: res
+        })
+      }).catch(msg => {
+        reject(msg)
       })
-    })
-  }
+    }
+  });
 }
+
 
 module.exports = mac

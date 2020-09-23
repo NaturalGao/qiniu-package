@@ -4,8 +4,10 @@ var router = express.Router();
 var mac = require("../package/qiniu-package")
 var multer = require('multer');
 const { use, param, route } = require('.');
+const BusinessError = require('../Error/BusinessError');
 var upload = multer()
 
+var app = express();
 
 /* get 上传token*/
 router.get('/uploadToken', function (req, response, next) {
@@ -22,16 +24,26 @@ router.get('/uploadToken', function (req, response, next) {
 /* POST 单文件上传 */
 router.post('/uploadFile', upload.single('file'), function (req, response, next) {
   let file = req.file
-  mac.putStream(file, (res) => {
+  mac.putStream(file).then(res => {
     response.json(res)
+  }).catch(msg => {
+    response.json({
+      code: 400,
+      msg: msg
+    })
   })
 })
 
 /* POST 多文件上传*/
 router.post('/uploadFile/many', upload.array('files'), function (req, response, next) {
   let files = req.files
-  mac.putStream(files, (res) => {
+  mac.putStream(files).then(res => {
     response.json(res)
+  }).catch(msg => {
+    response.json({
+      code: 400,
+      msg: msg
+    })
   })
 
 })
