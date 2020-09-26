@@ -1,11 +1,11 @@
 //基本配置
 const config = {
-  accessKey: 'rX6mOHSG29zzcdaqwEE7D6FR6me7fbx04rP6NAL8',
-  secretKey: '52seBU7aQzFt7ySwfniHI7uu36eW2iCiwDJdvmRY',
-  bucket: 'cimeiren',
-  domain: 'http://yun.kccmr.com/',
-  fileStorePath: '/test/',
-  defaultSize: 4   //默认4m 
+  accessKey: '', //accessKey
+  secretKey: '', //secretKey
+  bucket: '', //bucket
+  domain: '', //domain
+  fileStorePath: '/test/', //fileStorePath  上传前缀
+  defaultSize: 4 //默认4m                               //默认大小
 }
 
 //上传配置
