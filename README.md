@@ -95,9 +95,9 @@ axios.post(url, formData)
 
 ```json
 {
-    code: 200
-	data: "http://xx.xx.com/test/ra2jIojLGlgS0Cfo"
-	status: "success"
+  "code": 200,
+  "data": "http://xx.xx.com/test/ra2jIojLGlgS0Cfo",
+  "status": "success",
 }
 ```
 
@@ -143,18 +143,15 @@ axios.post(url, formData)
 ```
 
 
-
 **success：**
 
 ```json
 {
-    code: 200
-	data: "http://xx.xx.com/test/ra2jIojLGlgS0Cfo"
-	status: "success"
+  "code": 200,
+  "data" : "http://xx.xx.com/test/ra2jIojLGlgS0Cfo",
+  "status": "success",
 }
 ```
-
-
 
 **error:**
 
