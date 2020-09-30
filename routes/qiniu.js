@@ -1,9 +1,15 @@
-const { json } = require('express');
+const {
+  json
+} = require('express');
 var express = require('express');
 var router = express.Router();
 var mac = require("../package/qiniu-package")
 var multer = require('multer');
-const { use, param, route } = require('.');
+const {
+  use,
+  param,
+  route
+} = require('.');
 var upload = multer()
 
 /* get 上传token*/

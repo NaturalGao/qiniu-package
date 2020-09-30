@@ -3,8 +3,8 @@ const config = {
   accessKey: '', //accessKey
   secretKey: '', //secretKey
   bucket: '', //bucket
-  domain: '', //domain
-  fileStorePath: '/test/', //fileStorePath  上传前缀
+  domain: 'http://xx.xx.com/', //domain
+  fileStorePath: 'test/', //fileStorePath  上传前缀
   defaultSize: 4 //默认4m                               //默认大小
 }
 

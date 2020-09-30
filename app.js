@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-const cors = require('cors')  //跨域包
+const cors = require('cors') //跨域包
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -18,7 +18,9 @@ app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -36,7 +38,10 @@ app.use(function (req, res, next) {
 /* 全局错误抛出 */
 app.use((error, req, res, next) => {
   if (error) {
-    res.json({ msg: error.message, code: error.code })
+    res.json({
+      msg: error.message,
+      code: error.code
+    })
   }
 });
 

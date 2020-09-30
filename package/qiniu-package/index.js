@@ -1,9 +1,13 @@
-const qiniu = require("qiniu")   //七牛官方包
-const fs = require("fs")     //文件包
-const stream = require('stream');   //流处理
-const stringRandom = require('string-random');   //随机字符串包
+const qiniu = require("qiniu") //七牛官方包
+const fs = require("fs") //文件包
+const stream = require('stream'); //流处理
+const stringRandom = require('string-random'); //随机字符串包
+const encode = require('nodejs-base64-encode');
 
 const config = require("./config");
+const {
+  urlencoded
+} = require("body-parser");
 
 const conf = config.conf
 
@@ -34,13 +38,16 @@ const streamDuplex = buffer => {
  * 单文件上传
  * @param {*} uploadToken //上传token
  * @param {*} putExtra //上传配置
- * @param {*} key //文件key
  * @param {*} buffer   //文件buffer
  */
-const singleUpload = (uploadToken, formUploader, putExtra, key, buffer) => {
+const singleUpload = (uploadToken, formUploader, putExtra, buffer) => {
 
   return new Promise((resolve, reject) => {
     let readableStream = streamDuplex(buffer);
+
+    let base64Str = new Date().getTime() + stringRandom(16)
+    let filename = encode.encode(base64Str, 'base64')
+    let key = config.fileStorePath + filename
 
     formUploader.putStream(uploadToken, key, readableStream, putExtra, function (respErr,
       respBody, respInfo) {
@@ -68,8 +75,7 @@ const manyUpload = (uploadToken, formUploader, putExtra, files) => {
   return new Promise((resolve, reject) => {
     let uriArr = [];
     files.forEach(item => {
-      let key = item.key ? item.key : config.fileStorePath + stringRandom(16)
-      singleUpload(uploadToken, formUploader, putExtra, key, item.buffer).then(res => {
+      singleUpload(uploadToken, formUploader, putExtra, item.buffer).then(res => {
         uriArr.push(res)
         if (uriArr.length == files.length) {
           resolve(uriArr)
@@ -138,14 +144,14 @@ mac.putStream = files => {
         reject(msg)
       })
     } else {
-      let key = files.key ? files.key : config.fileStorePath + stringRandom(16)
-      singleUpload(uploadToken, formUploader, putExtra, key, files.buffer).then(res => {
+      singleUpload(uploadToken, formUploader, putExtra, files.buffer).then(res => {
         return resolve({
           code: 200,
           status: 'success',
           data: res
         })
       }).catch(msg => {
+        console.log(msg)
         reject(msg)
       })
     }
